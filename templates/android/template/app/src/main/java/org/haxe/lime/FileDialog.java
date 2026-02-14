@@ -336,12 +336,12 @@ public class FileDialog extends Extension
 					case DOCUMENT_TREE_REQUEST_CODE:
 						try
 						{
-							path = uri.toString();
+							path = uri;
 						}
-						catch (IOException e)
+						finally
 						{
-							Log.d(LOG_TAG, "Got directory tree uri:" + uri.toString());
-						)
+							Log.e(LOG_TAG, "Got directory tree uri:" + uri);
+						}
 						break;
 					default:
 						break;
@@ -361,9 +361,9 @@ public class FileDialog extends Extension
 		else
 			args[2] = data.getData().toString();
 		if (path != null) {
-        	args[3] = path;
+        	args[3] = getOriginalPath(path);
     	} else if (data != null && data.getData() != null) {
-        	args[3] = data.getData().getPath();
+        	args[3] = getOriginalPath(data.getData().getPath());
     	} else {
       	  args[3] = null;
     	}
@@ -372,6 +372,37 @@ public class FileDialog extends Extension
 
 		awaitingResults = false;
 		return true;
+	}
+
+	/**
+	 * Attempts to convert various Android SAF/document provider paths
+	 * to a more familiar, filesystem-like path (best effort conversion).
+	 * 
+	 * Handles common patterns:
+	 * - /tree/primary: → /storage/emulated/0/
+	 * - /document/raw: → remove prefix
+	 * - /document/primary: → /storage/emulated/0/
+	 * - /document// → /
+	 * - /document/ → /storage/
+	 * - First ":" → "/"
+	 * 
+	 * @param path Raw path
+	 * @return Best-effort converted path
+	 */
+	public static String getOriginalPath(String path) {
+		if (path == null || path.isEmpty()) return path;
+
+		path = path.replaceFirst("/tree/primary:", "/storage/emulated/0/")
+					.replaceFirst("/document/primary:", "/storage/emulated/0/")
+					.replaceFirst("/document/raw:", "")
+					.replaceFirst("/document/msf:", "/storage/emulated/0/Download/");
+
+		path = path.replaceFirst("/tree/", "/storage/")
+					.replaceFirst("/document/", "/storage/");
+
+		path = path.replaceFirst(":", "/");
+
+		return path.replace("//", "/");
 	}
 
 	public static String formatExtension(String extension)
