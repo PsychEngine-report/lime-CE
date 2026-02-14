@@ -125,7 +125,7 @@ class FileDialog #if android implements JNISafety #end
 		if (type == null) type = FileDialogType.OPEN;
 
 		#if desktop
-		var worker = new ThreadPool(#if (windows && hl) SINGLE_THREADED #end);
+		var worker = new ThreadPool(#if windows SINGLE_THREADED #end);
 
 		worker.onComplete.add(function(result)
 		{
@@ -246,12 +246,10 @@ class FileDialog #if android implements JNISafety #end
 
 			case OPEN_DIRECTORY:
 				JNI.callMember(JNI.createMemberMethod('org/haxe/lime/FileDialog', 'openDocumentTree', '(Ljava/lang/String;)V'), JNI_FILE_DIALOG, [null]);
-				onCancel.dispatch();
-				return false;
+				return true;
 
 			case SAVE:
 				save(null, filter, defaultPath, title, 'application/octet-stream');
-				onCancel.dispatch();
 				return false;
 		}
 		return true;
@@ -288,7 +286,7 @@ class FileDialog #if android implements JNISafety #end
 	public function open(filter:String = null, defaultPath:String = null, title:String = null):Bool
 	{
 		#if (desktop && sys)
-		var worker = new ThreadPool(#if (windows && hl) SINGLE_THREADED #end);
+		var worker = new ThreadPool(#if windows SINGLE_THREADED #end);
 
 		worker.onComplete.add(function(path:String)
 		{
@@ -360,7 +358,7 @@ class FileDialog #if android implements JNISafety #end
 		#end
 
 		#if (desktop && sys)
-		var worker = new ThreadPool(#if (windows && hl) SINGLE_THREADED #end);
+		var worker = new ThreadPool(#if windows SINGLE_THREADED #end);
 
 		worker.onComplete.add(function(path:String)
 		{
@@ -512,8 +510,7 @@ class FileDialog #if android implements JNISafety #end
 							trace('Failed to dispatch onSave: $e');
 					}
 				case DOCUMENT_TREE_REQUEST_CODE:
-					//trace("Directory select doesn't work yet.");
-					//onCancel.dispatch();
+					trace("Directory select doesn't work properly yet.");
 					try
 					{
 						onSelect.dispatch(path);
