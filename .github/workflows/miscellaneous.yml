@@ -22,7 +22,7 @@ jobs:
         run: |
           haxelib git hxcpp https://github.com/ShadowEngineTeam/hxcpp --quiet
           haxelib git format https://github.com/HaxeFoundation/format 9d69fb342d030fa120d2deafafbbffad248332b8 --quiet
-          haxelib git hxp https://github.com/openfl/hxp 47ef5ae6569cb0961761a2fbb416694df067124c --quiet
+          haxelib git hxp https://github.com/ShadowEngineTeam/hxp --quiet
           haxelib git openfl https://github.com/FunkinCrew/openfl 5399946b68fd98f345d6b3e52b95ed6b78bf427c --quiet
           haxelib git svg https://github.com/openfl/svg d74c6ef5ee2e8656a69a36c79e67a09086c6a9a4 --quiet
       - name: Enable HXCPP compile cache
